@@ -44,6 +44,7 @@ const HoSoBacSi = () => {
   const router = useRouter();
   const [healthLogBooks, setHealthLogBooks] = useState([]);
   const { globalHandler } = useContext(globalContext);
+  const [priceListHome, setPriceListHome] = useState(0);
   useEffect(() => {
     api({
       type: TypeHTTP.GET,
@@ -79,6 +80,9 @@ const HoSoBacSi = () => {
     }).then((res) => {
       setPriceList(
         res.filter((item) => item.type === "Online")[0]
+      );
+      setPriceListHome(
+        res.filter((item) => item.type === "Home")[0]
       );
     });
   }, [appointmentData.sicks]);
@@ -127,8 +131,8 @@ const HoSoBacSi = () => {
           <svg
             key={star}
             className={`w-6 h-6 ${star <= rating
-                ? "text-yellow-500"
-                : "text-gray-300"
+              ? "text-yellow-500"
+              : "text-gray-300"
               }`}
             fill="currentColor"
             viewBox="0 0 20 20"
@@ -174,7 +178,7 @@ const HoSoBacSi = () => {
                   GIÁ TƯ VẤN TRỰC TUYẾN
                 </span>
                 <span className="text-[17px]">
-                  {formatMoney(priceList?.price)}
+                  {formatMoney(priceList?.price)} đ
                 </span>
               </div>
               <div>
@@ -257,6 +261,44 @@ const HoSoBacSi = () => {
                   </div>
                 </div>
               )}
+
+            <div className="bg-[white] shadow-xl w-[90%] mt-2 px-3 py-2 rounded-lg flex items-center justify-between">
+              <div className="flex flex-col text-[#333333]">
+                <span className="text-[14px]">
+                  GIÁ TƯ VẤN TẠI NHÀ
+                </span>
+                <span className="text-[17px]">
+                  {formatMoney(priceListHome?.price)} đ
+                </span>
+              </div>
+              <div>
+                <button
+                  onClick={() => {
+                    if (userData.user) {
+                      if (userData.user?.email === "") {
+                        globalHandler.notify(
+                          notifyType.WARNING,
+                          "Vui lòng cập nhật email để đặt khám !!!"
+                        );
+                        return;
+                      }
+                    }
+                    appointmentHandler.setPriceList(
+                      priceListHome
+                    );
+                    appointmentHandler.showFormBookingHome(doctorRecord);
+
+                  }}
+                  style={{
+                    background:
+                      "linear-gradient(to right, #11998e, #38ef7d)",
+                  }}
+                  className="text-[16px] scale-[0.95] hover:scale-[1] transition-all rounded-3xl px-6 py-3 cursor-pointer text-[white]"
+                >
+                  Đặt Khám Ngay
+                </button>
+              </div>
+            </div>
           </div>
         </div>
         <div className=" z-0 pt-[15rem] overflow-hidden relative justify-center mt-[2rem] text-[#171717] w-[100%] items-center">

@@ -15,6 +15,9 @@ import FormRecordPatient from '@/components/appointment/FormRecordPatient'
 import FormDetailAppointment from '@/components/appointment/FormDetailAppointment'
 import FormSignUpHealth from '@/components/ho-so-ca-nhan-bac-si/FormSignUpHealth'
 import { utilsContext } from './UtilsContext'
+import FormBookingHome from '@/components/appointment/FormBookingHome'
+import FormDetailAppointmentHome from '@/components/appointmentHome/FormDetailAppointmentHome'
+import Calendar from '@/components/appointmentHome/Calendar'
 
 export const appointmentContext = createContext()
 
@@ -26,6 +29,7 @@ const AppointmentProvider = ({ children }) => {
     const [visibleFormDetailTime, setVisibleFormDetailTime] = useState(false)
     const [visibleSignUpAppointment, setVisibleSignUpAppointment] = useState(false)
     const [visibleFormBooking, setVisibleFormBooking] = useState(false)
+    const [visibleFormBookingHome, setVisibleFormBookingHome] = useState(false)
     const [visibleFormRecordPatient, setVisibleFormRecordPatient] = useState(false)
     const [dataFormDetailAppointment, setDataFormDetailAppointment] = useState()
     const [currentAppointment, setCurrentAppointment] = useState()
@@ -41,7 +45,10 @@ const AppointmentProvider = ({ children }) => {
     const [displayConnect, setDisplayConnect] = useState(false)
     const wrapperRef = useRef()
     const [doctorRecordBooking, setDoctorRecordBooking] = useState()
+    const [doctorRecordBookingHome, setDoctorRecordBookingHome] = useState()
     const { utilsHandler } = useContext(utilsContext)
+    const [dataFormDetailAppointmentHome, setDataFormDetailAppointmentHome] = useState()
+    const [appoinmentHomeCalendar, setAppointmentHomeCalendar] = useState()
 
     useEffect(() => {
         if (userData.user && userData.user?.role === 'DOCTOR') {
@@ -78,6 +85,19 @@ const AppointmentProvider = ({ children }) => {
         hiddenFormRecordPatient()
         hiddenFormDetailAppointment()
         hiddenFormSignUpHealth()
+        hiddenFormBookingHome()
+        hiddenFormDetailAppointmentHome()
+    }
+
+    const showFormBookingHome = (dr) => {
+        setDoctorRecordBookingHome(dr)
+        setVisibleFormBookingHome(true)
+        showWrapper()
+    }
+
+    const hiddenFormBookingHome = () => {
+        setVisibleFormBookingHome(false)
+        hiddenWrapper()
     }
 
     const showFormBooking = (sick) => {
@@ -165,6 +185,26 @@ const AppointmentProvider = ({ children }) => {
         setDataFormDetailAppointment()
     }
 
+    const hiddenFormDetailAppointmentHome = () => {
+        hiddenWrapper()
+        setDisplayConnect(false)
+        setDataFormDetailAppointmentHome()
+    }
+    const showFormDetailAppointmentHome = (appointmentHome, display) => {
+        showWrapper()
+        setDisplayConnect(display)
+        setDataFormDetailAppointmentHome(appointmentHome)
+    }
+
+    const hiddenFormAppointmentHomeCalendar = () => {
+        hiddenWrapper()
+        setAppointmentHomeCalendar()
+    }
+    const showFormAppointmentHomeCalendar = (ac) => {
+        showWrapper()
+        setAppointmentHomeCalendar(ac)
+    }
+
     const data = {
         detailTime,
         doctorRecord,
@@ -172,7 +212,8 @@ const AppointmentProvider = ({ children }) => {
         priceList,
         currentDay,
         currentAppointment,
-        medicalRecord
+        medicalRecord,
+        doctorRecordBookingHome
     }
 
     const handler = {
@@ -197,7 +238,14 @@ const AppointmentProvider = ({ children }) => {
         showFormDetailAppointment,
         hiddenFormDetailAppointment,
         setMedicalRecord,
-        showFormSignUpHealth
+        showFormSignUpHealth,
+        showFormBookingHome,
+        hiddenFormBookingHome,
+        setDoctorRecordBookingHome,
+        showFormDetailAppointmentHome,
+        hiddenFormDetailAppointmentHome,
+        hiddenFormAppointmentHomeCalendar,
+        showFormAppointmentHomeCalendar
     }
 
     return (
@@ -210,6 +258,9 @@ const AppointmentProvider = ({ children }) => {
             <FormBooking notify={utilsHandler.notify} hidden={hidden} visible={visibleFormBooking} sick={sick} />
             <FormDetailAppointment display={displayConnect} hidden={hidden} data={dataFormDetailAppointment} />
             <FormSignUpHealth doctorRecord={doctorRecordBooking} hidden={hidden} />
+            <FormBookingHome hidden={hidden} visible={visibleFormBookingHome} />
+            <FormDetailAppointmentHome display={displayConnect} hidden={hidden} data={dataFormDetailAppointmentHome} />
+            <Calendar data={appoinmentHomeCalendar} hidden={hiddenFormAppointmentHomeCalendar} />
             {/* <FormRecordPatient hidden={hidden} visible={visibleFormRecordPatient} /> */}
             {children}
         </appointmentContext.Provider>
